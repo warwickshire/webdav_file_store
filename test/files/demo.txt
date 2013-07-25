@@ -1,0 +1,4 @@
+Webdav File Store Demo File
+===========================
+
+This is a file used in tests of webdav_file_store

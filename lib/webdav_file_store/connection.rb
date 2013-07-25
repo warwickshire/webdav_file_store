@@ -41,7 +41,11 @@ module WebdavFileStore
     end
 
     def path
-      [url, file_name].join
+      [url_without_trailing_slash, file_name].join('/')
+    end
+
+    def url_without_trailing_slash
+      url.gsub(/\/$/, "")
     end
 
     def generate_response_from(net_http_class)

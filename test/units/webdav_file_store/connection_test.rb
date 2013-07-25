@@ -5,11 +5,13 @@ module WebdavFileStore
     def setup
       @path_to_demo = File.expand_path('../../../files/demo.txt', __FILE__)
       @file = File.open(@path_to_demo)
+      @file_name = File.basename(@path_to_demo)
       @webdav_url = 'http://localhost/webdav/'
-      @connection = Connection.new(@webdav_url)
+      @connection = Connection.new(@webdav_url, user: 'foo', password: 'bar')
     end
 
     def teardown
+      @connection.delete(@file_name)
       @file.close
     end
 
@@ -18,14 +20,28 @@ module WebdavFileStore
     end
 
     def test_put
-      url = @connection.put(@file)
-      assert_equal([@webdav_url, File.basename(@file.path)].join, url)
+      @connection.put(@file_name, file: @file)
+      expected = (200..204)
+      assert(expected.include?(@connection.response.code.to_i), "response code #{@connection.response.code} should be in #{expected}")
     end
 
     def test_get
       test_put
       @file = File.open(@path_to_demo)
-      assert_equal(@file.read, @connection.get(File.basename(@file.path)))
+      @connection.get(@file_name)
+      assert_equal(@file.read, @connection.response.body)
+    end
+
+    def test_delete
+      test_put
+      @connection.delete(@file_name)
+      @connection.get(@file_name)
+      assert_equal('404', @connection.response.code)
+    end
+
+    def test_response_code
+      test_get
+      assert_equal('200', @connection.response.code)
     end
 
   end

@@ -11,25 +11,25 @@ module WebdavFileStore
 
     def get(file_name)
       self.file_name = file_name
-      generate_response_from(Net::HTTP::Get)
+      generate_response_with(Net::HTTP::Get)
+    end
+
+    def delete(file_name)
+      self.file_name = file_name
+      generate_response_with(Net::HTTP::Delete)
     end
 
     def put(file_name, options = {})
       self.file_name = file_name
       file = data_for(options, :file)
 
-      generate_response_from(Net::HTTP::Put) do |request|
+      generate_response_with(Net::HTTP::Put) do |request|
         if file
           request.body_stream=file
           request["Content-Type"] = "multipart/form-data"
           request.add_field('Content-Length', file.size)
         end
       end      
-    end
-
-    def delete(file_name)
-      self.file_name = file_name
-      generate_response_from(Net::HTTP::Delete)
     end
 
     def uri
@@ -48,7 +48,7 @@ module WebdavFileStore
       url.gsub(/\/$/, "")
     end
 
-    def generate_response_from(net_http_class)
+    def generate_response_with(net_http_class)
       request = net_http_class.new(uri.request_uri)
       request.basic_auth(user, password) if user
       yield(request) if block_given?

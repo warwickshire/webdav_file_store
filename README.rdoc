@@ -1,0 +1,3 @@
+= Webdav File Store
+
+Facilitates file storage on a remote WebDav server

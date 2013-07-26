@@ -32,6 +32,13 @@ module WebdavFileStore
       end      
     end
 
+    def generate_response_with(net_http_class)
+      request = net_http_class.new(uri.request_uri)
+      request.basic_auth(user, password) if user
+      yield(request) if block_given?
+      self.response = http.request(request)
+    end
+
     def uri
       URI.parse(path)
     end
@@ -46,13 +53,6 @@ module WebdavFileStore
 
     def url_without_trailing_slash
       url.gsub(/\/$/, "")
-    end
-
-    def generate_response_with(net_http_class)
-      request = net_http_class.new(uri.request_uri)
-      request.basic_auth(user, password) if user
-      yield(request) if block_given?
-      self.response = http.request(request)
     end
 
     def data_for(hash, attribute)

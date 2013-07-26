@@ -1,3 +1,42 @@
 = Webdav File Store
 
 Facilitates file storage on a remote WebDav server
+
+== Connection to remote WebDAV
+
+A connection object is provided to allow files to be managed on a remote WebDAV
+server.
+
+=== Create a connection object
+
+    url = 'http://weddav.somewhere.com/'
+    user = 'Optional Smith'
+    password = 'OptionalPassword'
+    connection = WebdavFileStore.connection.new(
+                   url,
+                   user: user,
+                   password: password
+                 )
+
+=== Get a file from the url
+
+To get the file at 'http://weddav.somewhere.com/some.txt' :
+
+    file_name = 'some.txt'
+    response = connection.get(file_name).response
+    file_content = response.body
+
+=== Send a file to the url
+
+    File.open('local/path/to/some.txt') do |file|
+      response = connection.put(file_name, file).response
+      @success = true if (200..204).include?(response.code.to_i)
+    end
+
+=== Delete the file from the remote WebDAV
+
+    connection.delete(file_name)
+
+=== Check file no longer on remote WebDAV
+
+    connection.get(file_name).response.code == '404'

@@ -1,2 +1,5 @@
 # rvm config files
 .ruby-*
+
+# test database
+/test/db/*.db

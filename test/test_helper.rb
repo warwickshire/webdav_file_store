@@ -26,4 +26,9 @@ end
 fixture_path = File.join(File.dirname(__FILE__),"fixtures")
 ActiveRecord::Fixtures.create_fixtures(fixture_path, :things)
 
+def connection
+  @webdav_url = 'http://localhost/webdav/'
+  @connection ||= WebdavFileStore::Connection.new(@webdav_url, user: 'foo', password: 'bar')
+end
+
 

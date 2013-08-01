@@ -79,7 +79,7 @@ module WebdavFileStore
 
     def ensure_path_to_file_exists
       slash_pattern = /\//
-      different_connection = clone # Using another connection, so that actions done here don't overwrite main connection methods
+      different_connection = clone # Using another webdav_connection, so that actions done here don't overwrite main connection methods
       file_name.split(slash_pattern).inject do |current, element|
         different_connection.mkdir(current) unless different_connection.folder_exist? current
         [current, element].join('/')

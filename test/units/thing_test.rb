@@ -6,7 +6,7 @@ class ThingTest < ActiveSupport::TestCase
   def setup
     @string = 'this'
     @thing = Thing.find(1)
-    @file = File.open(File.expand_path("../../files/demo.txt", __FILE__))
+    file
   end
 
   def teardown
@@ -50,7 +50,6 @@ class ThingTest < ActiveSupport::TestCase
   end
 
   def test_file_sent_to_webdav_on_save
-    assert_attachment_not_in_webdav
     @thing.attachment = @file
     @thing.save
     connection = @thing.webdav_file_stores[:attachment][:connection]
@@ -59,11 +58,16 @@ class ThingTest < ActiveSupport::TestCase
     assert_attachment_in_webdav
   end
 
-  def assert_attachment_not_in_webdav
-#    assert_equal('404', connection.get(@thing.path_to_file).response.code)
+  def test_getting_file
+    test_file_sent_to_webdav_on_save
+    assert_equal(file.read, @thing.attachment.stored_content)
   end
 
   def assert_attachment_in_webdav
     assert_match(/20\d/, connection.get(@path).response.code)
+  end
+
+  def file
+    @file = File.open(File.expand_path("../../files/demo.txt", __FILE__))
   end
 end

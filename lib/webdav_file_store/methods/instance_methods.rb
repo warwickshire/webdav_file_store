@@ -16,8 +16,11 @@ module WebdavFileStore
       end
 
       def webdav_connection
-        webdav_url = 'http://localhost/webdav'
-        WebdavFileStore::Connection.new(webdav_url, user: 'foo', password: 'bar')
+        WebdavFileStore::Connection.new(
+          RemoteServer.url,
+          user: RemoteServer.user,
+          password: RemoteServer.password
+        )
       end
 
       def webdav_file_stores

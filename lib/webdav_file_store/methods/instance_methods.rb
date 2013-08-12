@@ -10,6 +10,7 @@ module WebdavFileStore
       def save_file_to_webdav
         webdav_file_stores.keys.each do |attribute|
           store = webdav_file_stores[attribute]
+          next unless store
           store[:connection] = webdav_connection
           store[:connection].put(store[:path], file: store[:file])
         end
@@ -47,7 +48,7 @@ module WebdavFileStore
 
       def replace_webdav_file_store_attributes_with_file_names
         webdav_file_stores.each do |attribute, data|
-          send("#{attribute}=".to_sym, File.basename(data[:file])) if data[:file]
+          send("#{attribute}=".to_sym, File.basename(data[:file])) if data and data[:file]
         end
       end
 

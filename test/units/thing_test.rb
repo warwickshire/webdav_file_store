@@ -63,6 +63,11 @@ class ThingTest < ActiveSupport::TestCase
     assert_equal(file.read, @thing.attachment.stored_content)
   end
 
+  def test_thing_can_be_saved_without_an_attachment
+    thing = Thing.new
+    assert thing.save, "Thing should be saved: #{thing.errors}"
+  end
+
   def assert_attachment_in_webdav
     assert_match(/20\d/, connection.get(@path).response.code)
   end

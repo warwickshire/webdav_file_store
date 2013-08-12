@@ -14,21 +14,18 @@ class ActiveSupport::TestCase
 
   include ActiveRecord::TestFixtures
 
-  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
-  #
-  # Note: You'll currently still have to declare fixtures explicitly in integration tests
-  # -- they do not yet inherit this setting
   fixtures :things
 
-  # Add more helper methods to be used by all tests here...
 end
 
 fixture_path = File.join(File.dirname(__FILE__),"fixtures")
 ActiveRecord::Fixtures.create_fixtures(fixture_path, :things)
 
-WebdavFileStore::RemoteServer.url = 'http://localhost/webdav/'
-WebdavFileStore::RemoteServer.user = 'foo'
-WebdavFileStore::RemoteServer.password = 'bar'
+WebdavFileStore::RemoteServer.settings(
+  url: 'http://localhost/webdav/',
+  user: 'foo',
+  password: 'bar'
+)
 
 def connection
   @webdav_url = WebdavFileStore::RemoteServer.url

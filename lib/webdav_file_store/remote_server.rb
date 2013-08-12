@@ -2,6 +2,14 @@
 module WebdavFileStore
   module RemoteServer
 
+    def self.settings(args)
+      [:url, :user, :password].each do |method|
+        value = args[method] || args[method.to_s]
+        send("#{method}=", value) if value.present?
+      end
+      
+    end
+
     def self.url
       @url
     end

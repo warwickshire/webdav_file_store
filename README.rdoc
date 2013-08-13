@@ -1,6 +1,27 @@
 = Webdav File Store
 
-Facilitates file storage on a remote WebDav server
+Facilitates file storage on a remote WebDav server.
+
+== Oh dear!
+
+I created Webdav File Store after a frustrating attempt at getting paperclip
+to work with webdav, and little success finding an alternative. I had the
+intention of releasing my code as a gem, but did not get that far.
+
+I got the model side of things working reasonably and was investigating how to
+integrate things within a rails controller (how to handle the data returned from
+a form field and pass that into my methods), when I discovered a reference to
+carrierwave in the Rails form helper guides ....
+
+I've now realised that CarrierWave[https://github.com/carrierwaveuploader/carrierwave/]
+and 'CarrierWave for WebDAV'[https://github.com/qinix/carrierwave-webdav]
+do just what I wanted. So I've stopped development of Webdav File Store and am
+using CarrierWave instead.
+
+So at the moment, Webdav File Store is moth-balled until I find a reason to
+revive it.
+
+Rob Nichols 13-Aug-2013
 
 == Connection to remote WebDAV
 
@@ -40,3 +61,38 @@ To get the file at 'http://weddav.somewhere.com/some.txt' :
 === Check file no longer on remote WebDAV
 
     connection.get(file_name).response.code == '404'
+
+== Integration with ActiveRecord
+
+=== Setting up the model
+
+If you wish to attach a file to an active record model, first add a field to
+store the name of the the file. Then add a *has_webdav_file_store* directive
+to the model. For example
+
+    class Thing < ActiveRecord::Base
+      has_webdav_file_store :attachment
+    end
+
+=== Configure the server connection
+
+Create an initializer (e.g. /config/initializers/webdav_file_store.rb):
+
+    WebdavFileStore::RemoteServer.settings(
+      url: 'http://url_to.com/webdav/',
+      user: 'foo',
+      password: 'bar'
+    )
+
+=== Saving and retrieving files
+
+Then to store the file:
+
+    file = File.open('path/to/file.txt')
+    thing = Thing.new(attachment: file)
+    thing.save
+    thing.attachment  --> 'file.txt'
+
+Retrieving the file contents:
+
+    file.read == thing.attachment.stored_content
